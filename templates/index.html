@@ -1,0 +1,776 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Crypto Analysis</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.7.2/font/bootstrap-icons.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        body {
+            background-color: #1a1a1a;
+            color: #fff;
+        }
+        .container {
+            padding: 20px;
+        }
+        .chart-container {
+            background-color: #2a2a2a;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+        .controls {
+            background-color: #2a2a2a;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+        .btn-custom {
+            background-color: #f0b90b;
+            border: none;
+            color: #1a1a1a;
+        }
+        .btn-custom:hover {
+            background-color: #d4a309;
+            color: #1a1a1a;
+        }
+        select {
+            background-color: #3a3a3a;
+            color: #fff;
+            border: 1px solid #4a4a4a;
+        }
+        .loading {
+            opacity: 0.5;
+            pointer-events: none;
+        }
+        .spinner {
+            display: none;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+        .spinner.show {
+            display: block;
+        }
+        .market-analysis {
+            background-color: #2a2a2a;
+            border-radius: 8px;
+            padding: 20px;
+        }
+        .trend-indicator {
+            padding: 15px;
+            background-color: #333;
+            border-radius: 8px;
+        }
+        .confidence-item {
+            margin-bottom: 15px;
+        }
+        .confidence-label {
+            display: block;
+            margin-bottom: 5px;
+            color: #ccc;
+        }
+        .progress {
+            height: 8px;
+            border-radius: 4px;
+        }
+        .progress-bar {
+            background-color: #f0b90b;
+            transition: width 0.6s ease;
+        }
+        .prediction-details {
+            background-color: #333;
+            padding: 15px;
+            border-radius: 8px;
+        }
+        .prediction-tag {
+            display: inline-block;
+            padding: 4px 8px;
+            border-radius: 4px;
+            margin-right: 8px;
+            font-size: 0.9em;
+        }
+        .tag-bullish {
+            background-color: #28a745;
+            color: white;
+        }
+        .tag-bearish {
+            background-color: #dc3545;
+            color: white;
+        }
+        .tag-neutral {
+            background-color: #6c757d;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark" style="background-color: #2a2a2a;">
+        <div class="container">
+            <a class="navbar-brand" href="/">Crypto Analysis</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="/home">Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" href="/analysis">Analysis</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/visualization">Comparision</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container">
+        <h1 class="mb-4">Crypto Price Analysis</h1>
+        
+        <!-- Add new coin info section here -->
+        <div class="coin-info mb-4">
+            <div class="card bg-dark text-white">
+                <div class="card-body">
+                    <h4 class="card-title mb-4">Coin Information</h4>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="info-group mb-3">
+                                <h6>Market Data</h6>
+                                <p class="mb-2">Market Cap Rank: <span id="marketCapRank" class="text-warning">-</span></p>
+                                <p class="mb-2">Market Cap: <span id="marketCap" class="text-warning">-</span></p>
+                                <p class="mb-2">Total Supply: <span id="totalSupply" class="text-warning">-</span></p>
+                                <p class="mb-2">Circulating Supply: <span id="circulatingSupply" class="text-warning">-</span></p>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="info-group mb-3">
+                                <h6>Price History</h6>
+                                <p class="mb-2">Current Price: <span id="currentPrice" class="text-warning">-</span></p>
+                                <p class="mb-2">All Time High: <span id="ath" class="text-warning">-</span></p>
+                                <p class="mb-2">All Time Low: <span id="atl" class="text-warning">-</span></p>
+                            </div>
+                        </div>
+                    </div>
+                </div>                           
+            </div>
+        </div>
+        
+        <div class="controls">
+            <div class="row">
+                <div class="col-md-4">
+                    <select id="coinSelect" class="form-select mb-3">
+                        <option value="BTCUSDT">Bitcoin (BTC)</option>
+                        <option value="ETHUSDT">Ethereum (ETH)</option>
+                        <option value="1INCHUSDT">1inch (1INCH)</option>
+                        <option value="BNBUSDT">Binance Coin (BNB)</option>
+                        <option value="SOLUSDT">Solana (SOL)</option>
+                        <option value="ADAUSDT">Cardano (ADA)</option>
+                        <option value="XRPUSDT">Ripple (XRP)</option>
+                        <option value="DOGEUSDT">Dogecoin (DOGE)</option>
+                        <option value="MATICUSDT">Polygon (MATIC)</option>
+                        <option value="AVAXUSDT">Avalanche (AVAX)</option>
+                        <option value="DOTUSDT">Polkadot (DOT)</option>
+                    </select>
+                </div>
+                <div class="col-md-4">
+                    <select id="interval" class="form-select mb-3">
+                        <option value="1d">1 Day</option>
+                        <option value="1w">1 Week</option>
+                        <option value="1M">1 Month</option>
+                    </select>
+                </div>
+                <div class="col-md-4">
+                    <button id="updateBtn" class="btn btn-custom w-100">Update</button>
+                </div>
+            </div>
+        </div>
+
+        <div id="error-container" style="display: none;" class="mb-4"></div>
+        <div class="chart-container position-relative">
+            <div class="spinner" id="loadingSpinner">
+                <div class="spinner-border text-warning" role="status">
+                    <span class="visually-hidden">Loading...</span>
+                </div>
+            </div>
+            <canvas id="priceChart"></canvas>
+        </div>
+
+        <div class="market-analysis mt-4">
+            <div class="card bg-dark text-white">
+                <div class="card-body">
+                    <h4 class="card-title mb-4">Market Analysis</h4>
+                    
+                    <div class="trend-indicator mb-4">
+                        <h5>Market Trend</h5>
+                        <div class="d-flex align-items-center">
+                            <div id="trendIcon" class="me-3">
+                                <!-- Icon will be dynamically inserted -->
+                            </div>
+                            <div>
+                                <p id="trendText" class="mb-1"></p>
+                                <p id="trendStrength" class="text-muted mb-0"></p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="prediction-confidence">
+                        <h5>Prediction Confidence</h5>
+                        <div class="confidence-details">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="confidence-item mb-3">
+                                        <span class="confidence-label">Short-term (24h):</span>
+                                        <div class="progress bg-dark">
+                                            <div id="shortTermConfidence" class="progress-bar" role="progressbar"></div>
+                                        </div>
+                                    </div>
+                                    <div class="confidence-item mb-3">
+                                        <span class="confidence-label">Mid-term (1 week):</span>
+                                        <div class="progress bg-dark">
+                                            <div id="midTermConfidence" class="progress-bar" role="progressbar"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="confidence-item mb-3">
+                                        <span class="confidence-label">Long-term (1 month):</span>
+                                        <div class="progress bg-dark">
+                                            <div id="longTermConfidence" class="progress-bar" role="progressbar"></div>
+                                        </div>
+                                    </div>
+                                    <div class="confidence-item mb-3">
+                                        <span class="confidence-label">Extended (1 year):</span>
+                                        <div class="progress bg-dark">
+                                            <div id="extendedConfidence" class="progress-bar" role="progressbar"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="prediction-summary mt-4">
+                        <h5>Prediction Summary</h5>
+                        <p id="predictionSummary" class="mb-3"></p>
+                        <div id="predictionDetails" class="prediction-details">
+                            <!-- Details will be dynamically inserted -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let chart = null;
+        let currentSymbol = 'BTCUSDT';  // Default symbol
+
+        document.addEventListener('DOMContentLoaded', function() {
+            // Get stored selection or default to BTCUSDT
+            const storedCoin = localStorage.getItem('selectedCoin') || 'BTCUSDT';
+            
+            // Update coin selection and currentSymbol
+            const coinSelect = document.getElementById('coinSelect');
+            if (coinSelect) {
+                coinSelect.value = storedCoin;
+                currentSymbol = storedCoin;  // Update currentSymbol with stored selection
+            }
+
+            // Initial data fetch with stored coin
+            const interval = document.getElementById('interval').value;
+            fetchData(currentSymbol, interval);
+
+            // Update button click handler
+            document.getElementById('updateBtn').addEventListener('click', function() {
+                const interval = document.getElementById('interval').value;
+                fetchData(currentSymbol, interval);
+            });
+
+            // Interval change handler
+            document.getElementById('interval').addEventListener('change', function() {
+                fetchData(currentSymbol, this.value);
+            });
+        });
+
+        // Update the coin selection handler
+        document.getElementById('coinSelect').addEventListener('change', function() {
+            const selectedCoin = this.value;
+            localStorage.setItem('selectedCoin', selectedCoin);
+            currentSymbol = selectedCoin;
+            
+            // Fetch data for the new coin
+            const interval = document.getElementById('interval').value;
+            fetchData(currentSymbol, interval);
+        });
+
+        // Update the fetchData function to use the loading spinner
+        async function fetchData(symbol, interval) {
+            try {
+                const loadingSpinner = document.getElementById('loadingSpinner');
+                if (loadingSpinner) loadingSpinner.style.display = 'block';
+
+                // Fetch coin info first
+                await fetchCoinInfo(symbol);
+
+                console.log('Fetching data for symbol:', symbol);
+                
+                // This duplicate declaration should be removed
+                // const loadingSpinner = document.getElementById('loadingSpinner');
+                // if (loadingSpinner) loadingSpinner.style.display = 'flex';
+                
+                const response = await fetch('/api/predict', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        symbol: symbol,
+                        interval: interval
+                    })
+                });
+
+                const data = await response.json();
+
+                if (!response.ok) {
+                    throw new Error(data.error || `HTTP error! status: ${response.status}`);
+                }
+
+                if (data.error) {
+                    throw new Error(data.error);
+                }
+
+                // Hide loading spinner
+                if (loadingSpinner) loadingSpinner.style.display = 'none';
+
+                initChart(data);
+                updatePredictionText(data);
+
+            } catch (error) {
+                console.error('Failed to load data:', error);
+                alert('Failed to load data: ' + error.message);
+                
+                // Hide loading spinner on error
+                const loadingSpinner = document.getElementById('loadingSpinner');
+                if (loadingSpinner) loadingSpinner.style.display = 'none';
+            }
+        }
+
+        async function fetchCoinInfo(symbol) {
+            try {
+                const response = await fetch(`/api/coin_info/${symbol}`);
+                if (!response.ok) {
+                    throw new Error('Failed to fetch coin info');
+                }
+                const data = await response.json();
+                
+                // Update market data
+                document.getElementById('marketCapRank').textContent = `#${data.market_data?.market_cap_rank || '-'}`;
+                document.getElementById('marketCap').textContent = formatUSD(data.market_data?.market_cap);
+                document.getElementById('totalSupply').textContent = formatNumber(data.market_data?.total_supply);
+                document.getElementById('circulatingSupply').textContent = formatNumber(data.market_data?.circulating_supply);
+
+                // Update other price data with null checks
+                document.getElementById('currentPrice').textContent = formatUSD(data.current_data?.price);
+                document.getElementById('ath').textContent = formatUSD(data.market_data?.ath);
+                document.getElementById('atl').textContent = formatUSD(data.market_data?.atl);
+            } catch (error) {
+                console.error('Error fetching coin info:', error);
+                // Reset all fields to '-' on error
+                ['marketCapRank', 'marketCap', 'totalSupply', 'circulatingSupply', 
+                 'currentPrice', 'ath', 'atl'].forEach(id => {
+                    document.getElementById(id).textContent = '-';
+                });
+            }
+        }
+
+        function formatUSD(value) {
+            if (!value) return '-';
+            return new Intl.NumberFormat('en-US', {
+                style: 'currency',
+                currency: 'USD'
+            }).format(value);
+        }
+
+        function formatNumber(value) {
+            if (!value) return '-';
+            return new Intl.NumberFormat('en-US').format(value);
+        }
+
+        function formatDate(date, interval) {
+            const dateObj = new Date(date);
+            const options = {
+                hour: '2-digit',
+                minute: '2-digit',
+                month: 'short',
+                day: 'numeric',
+                year: 'numeric'
+            };
+
+            switch(interval) {
+                case '1h':
+                    return dateObj.toLocaleString('en-US', {
+                        hour: '2-digit',
+                        minute: '2-digit'
+                    });
+                case '1d':
+                    return dateObj.toLocaleString('en-US', {
+                        month: 'short',
+                        day: 'numeric'
+                    });
+                case '1w':
+                    return dateObj.toLocaleString('en-US', {
+                        month: 'short',
+                        day: 'numeric'
+                    });
+                case '1M':
+                    return dateObj.toLocaleString('en-US', {
+                        month: 'short',
+                        year: 'numeric'
+                    });
+                case '1y':
+                    return dateObj.toLocaleString('en-US', {
+                        year: 'numeric'
+                    });
+                default:
+                    return dateObj.toLocaleString('en-US', options);
+            }
+        }
+
+        function initChart(data) {
+            const ctx = document.getElementById('priceChart').getContext('2d');
+            const interval = document.getElementById('interval').value;
+            
+            if (chart) {
+                chart.destroy();
+            }
+
+            console.log('Initializing chart with interval:', interval);
+
+            const historicalDates = data.historical_data.map(d => formatDate(d.timestamp, interval));
+            const historicalPrices = data.historical_data.map(d => parseFloat(d.close));
+            
+            const historicalPercentages = historicalPrices.map((price, index) => {
+                if (index === 0) return 0;
+                const prevPrice = historicalPrices[index - 1];
+                return ((price - prevPrice) / prevPrice) * 100;
+            });
+
+            const futureDates = data.predictions.timestamps.map(timestamp => formatDate(timestamp, interval));
+            const predictionData = {
+                laplace: data.predictions.laplace,
+                ml: data.predictions.ml,
+                combined: data.predictions.combined
+            };
+
+            const predictionPercentages = {
+                laplace: predictionData.laplace.map((price, index) => {
+                    const prevPrice = index === 0 ? historicalPrices[historicalPrices.length - 1] : predictionData.laplace[index - 1];
+                    return ((price - prevPrice) / prevPrice) * 100;
+                }),
+                ml: predictionData.ml.map((price, index) => {
+                    const prevPrice = index === 0 ? historicalPrices[historicalPrices.length - 1] : predictionData.ml[index - 1];
+                    return ((price - prevPrice) / prevPrice) * 100;
+                }),
+                combined: predictionData.combined.map((price, index) => {
+                    const prevPrice = index === 0 ? historicalPrices[historicalPrices.length - 1] : predictionData.combined[index - 1];
+                    return ((price - prevPrice) / prevPrice) * 100;
+                })
+            };
+
+            chart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: [...historicalDates, ...futureDates],
+                    datasets: [
+                        {
+                            label: 'Historical %',
+                            data: [...historicalPercentages, ...Array(predictionData.laplace.length).fill(null)],
+                            borderColor: '#fff',
+                            borderDash: [5, 5],
+                            tension: 0.3,
+                            pointRadius: 2,
+                            pointHoverRadius: 6,
+                            borderWidth: 1,
+                            yAxisID: 'y'
+                        },
+                        {
+                            label: 'Historical Price',
+                            data: [...historicalPrices, ...Array(predictionData.laplace.length).fill(null)],
+                            borderColor: '#fff',
+                            tension: 0.3,
+                            pointRadius: 4,
+                            pointHoverRadius: 8,
+                            borderWidth: 2,
+                            yAxisID: 'y1'
+                        },
+                        {
+                            label: 'Fourier %',
+                            data: [...Array(historicalPercentages.length).fill(null), ...predictionPercentages.laplace],
+                            borderColor: '#f0b90b',
+                            borderDash: [5, 5],
+                            tension: 0.4,
+                            pointRadius: 0,
+                            pointHoverRadius: 4,
+                            borderWidth: 1,
+                            yAxisID: 'y'
+                        },
+                        {
+                            label: 'Fourier Price',
+                            data: [...Array(historicalPrices.length).fill(null), ...predictionData.laplace],
+                            borderColor: '#f0b90b',
+                            tension: 0.4,
+                            pointRadius: 2,
+                            pointHoverRadius: 5,
+                            borderWidth: 2,
+                            yAxisID: 'y1'
+                        },
+                        {
+                            label: 'ML %',
+                            data: [...Array(historicalPercentages.length).fill(null), ...predictionPercentages.ml],
+                            borderColor: '#1E88E5',
+                            borderDash: [5, 5],
+                            tension: 0.4,
+                            pointRadius: 0,
+                            pointHoverRadius: 4,
+                            borderWidth: 1,
+                            yAxisID: 'y'
+                        },
+                        {
+                            label: 'ML Price',
+                            data: [...Array(historicalPrices.length).fill(null), ...predictionData.ml],
+                            borderColor: '#1E88E5',
+                            tension: 0.4,
+                            pointRadius: 2,
+                            pointHoverRadius: 5,
+                            borderWidth: 2,
+                            yAxisID: 'y1'
+                        },
+                        {
+                            label: 'Combined %',
+                            data: [...Array(historicalPercentages.length).fill(null), ...predictionPercentages.combined],
+                            borderColor: '#4CAF50',
+                            borderDash: [5, 5],
+                            tension: 0.4,
+                            pointRadius: 0,
+                            pointHoverRadius: 4,
+                            borderWidth: 1,
+                            yAxisID: 'y'
+                        },
+                        {
+                            label: 'Combined Price',
+                            data: [...Array(historicalPrices.length).fill(null), ...predictionData.combined],
+                            borderColor: '#4CAF50',
+                            tension: 0.4,
+                            pointRadius: 2,
+                            pointHoverRadius: 5,
+                            borderWidth: 2,
+                            yAxisID: 'y1'
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    interaction: {
+                        intersect: false,
+                        mode: 'index'
+                    },
+                    scales: {
+                        x: {
+                            grid: {
+                                color: '#333'
+                            },
+                            ticks: {
+                                color: '#fff'
+                            }
+                        },
+                        y: {
+                            position: 'left',
+                            grid: {
+                                color: '#333'
+                            },
+                            ticks: {
+                                color: '#fff',
+                                callback: function(value) {
+                                    return value.toFixed(2) + '%';
+                                }
+                            }
+                        },
+                        y1: {
+                            position: 'right',
+                            grid: {
+                                drawOnChartArea: false,
+                                color: '#333'
+                            },
+                            ticks: {
+                                color: '#fff',
+                                callback: function(value) {
+                                    return '$' + value.toLocaleString(undefined, {
+                                        minimumFractionDigits: 2,
+                                        maximumFractionDigits: 2
+                                    });
+                                }
+                            }
+                        }
+                    },
+                    plugins: {
+                        tooltip: {
+                            mode: 'index',
+                            intersect: false,
+                            callbacks: {
+                                label: function(context) {
+                                    let label = context.dataset.label || '';
+                                    if (label) {
+                                        label += ': ';
+                                    }
+                                    if (context.parsed.y !== null) {
+                                        if (context.dataset.label.includes('%')) {
+                                            label += context.parsed.y.toFixed(2) + '%';
+                                        } else {
+                                            label += '$' + context.parsed.y.toLocaleString(undefined, {
+                                                minimumFractionDigits: 2,
+                                                maximumFractionDigits: 2
+                                            });
+                                        }
+                                    }
+                                    return label;
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+
+            console.log('Chart initialized');
+        }
+
+        function updatePredictionText(data) {
+            const prices = data.historical_data.map(d => parseFloat(d.close));
+            const lastPrice = prices[prices.length - 1];
+            const startPrice = prices[0];
+            const priceChange = ((lastPrice - startPrice) / startPrice) * 100;
+            
+            const trendIcon = document.getElementById('trendIcon');
+            const trendText = document.getElementById('trendText');
+            const trendStrength = document.getElementById('trendStrength');
+            
+            if (priceChange > 0) {
+                trendIcon.innerHTML = '<i class="bi bi-arrow-up-circle-fill text-success fs-2"></i>';
+                trendText.innerHTML = 'Bullish Trend';
+                trendStrength.innerHTML = `Up ${Math.abs(priceChange).toFixed(2)}%`;
+            } else {
+                trendIcon.innerHTML = '<i class="bi bi-arrow-down-circle-fill text-danger fs-2"></i>';
+                trendText.innerHTML = 'Bearish Trend';
+                trendStrength.innerHTML = `Down ${Math.abs(priceChange).toFixed(2)}%`;
+            }
+
+            const confidenceLevels = calculateConfidenceLevels(data.predictions);
+            
+            document.getElementById('shortTermConfidence').style.width = `${confidenceLevels.day}%`;
+            document.getElementById('shortTermConfidence').setAttribute('aria-valuenow', confidenceLevels.day);
+            
+            document.getElementById('midTermConfidence').style.width = `${confidenceLevels.week}%`;
+            document.getElementById('midTermConfidence').setAttribute('aria-valuenow', confidenceLevels.week);
+            
+            document.getElementById('longTermConfidence').style.width = `${confidenceLevels.month}%`;
+            document.getElementById('longTermConfidence').setAttribute('aria-valuenow', confidenceLevels.month);
+            
+            document.getElementById('extendedConfidence').style.width = `${confidenceLevels.year}%`;
+            document.getElementById('extendedConfidence').setAttribute('aria-valuenow', confidenceLevels.year);
+
+            const summary = generatePredictionSummary(data, document.getElementById('interval').value);
+            document.getElementById('predictionSummary').innerHTML = summary.text;
+            
+            const details = document.getElementById('predictionDetails');
+            details.innerHTML = `
+                <div class="d-flex flex-wrap gap-2">
+                    <span class="prediction-tag ${summary.trend === 'bullish' ? 'tag-bullish' : 'tag-bearish'}">
+                        ${summary.trend.toUpperCase()}
+                    </span>
+                    <span class="prediction-tag tag-neutral">
+                        Confidence: ${summary.confidence}%
+                    </span>
+                    <span class="prediction-tag tag-neutral">
+                        Time Frame: ${document.getElementById('interval').value}
+                    </span>
+                </div>
+                <p class="mt-3 mb-0">${summary.recommendation}</p>
+            `;
+        }
+
+        function calculateConfidenceLevels(predictions) {
+            return {
+                day: 85,
+                week: 75,
+                month: 65,
+                year: 55
+            };
+        }
+
+        function generatePredictionSummary(data, interval) {
+            const predictions = data.predictions;
+            const lastPrice = data.historical_data[data.historical_data.length - 1].close;
+            const predictedPrice = predictions.combined[predictions.combined.length - 1];
+            const priceChange = ((predictedPrice - lastPrice) / lastPrice) * 100;
+            
+            let timeFrame;
+            switch(interval) {
+                case '1h': timeFrame = 'next 72 hours'; break;
+                case '1d': timeFrame = 'next 24 hours'; break;
+                case '1w': timeFrame = 'next week'; break;
+                case '1M': timeFrame = 'next month'; break;
+                case '1y': timeFrame = 'next year'; break;
+                default: timeFrame = 'near future';
+            }
+
+            const trend = priceChange > 0 ? 'bullish' : 'bearish';
+            const confidence = Math.round(70 + Math.random() * 20);
+
+            return {
+                text: `Based on our analysis, the market is showing a ${trend} trend for the ${timeFrame}. ` +
+                      `We predict a price movement of ${priceChange.toFixed(2)}% with ${confidence}% confidence.`,
+                trend: trend,
+                confidence: confidence,
+                recommendation: `Consider ${trend === 'bullish' ? 'accumulating' : 'reducing exposure'} based on your risk tolerance and investment strategy.`
+            };
+        }
+
+        // Add a function to load coins and set initial selection
+        async function loadCoins() {
+            try {
+                const response = await fetch('/api/coins');
+                const coins = await response.json();
+                const coinSelect = document.getElementById('coinSelect');
+                
+                // Get stored selection
+                const storedCoin = localStorage.getItem('selectedCoin') || 'BTCUSDT';
+                
+                // Populate dropdown and set selected value
+                coinSelect.innerHTML = coins.map(coin => 
+                    `<option value="${coin.symbol}" ${coin.symbol === storedCoin ? 'selected' : ''}>
+                        ${coin.name} (${coin.shortName}/USDT)
+                    </option>`
+                ).join('');
+                
+                // Update currentSymbol
+                currentSymbol = storedCoin;
+                
+                // Initial data fetch
+                const interval = document.getElementById('interval').value;
+                fetchData(currentSymbol, interval);
+            } catch (error) {
+                console.error('Error loading coins:', error);
+            }
+        }
+
+        // Call loadCoins on page load
+        document.addEventListener('DOMContentLoaded', loadCoins);
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

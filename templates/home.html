@@ -1,0 +1,407 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Crypto Analysis - Home</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            background-color: #1a1a1a;
+            color: #fff;
+        }
+
+        .hero-section {
+            padding: 100px 0;
+            background: linear-gradient(135deg, #2a2a2a 0%, #1a1a1a 100%);
+        }
+
+        .feature-card {
+            background-color: #2a2a2a;
+            border-radius: 8px;
+            padding: 25px;
+            margin-bottom: 20px;
+            transition: transform 0.3s ease;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .btn-custom {
+            background-color: #f0b90b;
+            border: none;
+            color: #1a1a1a;
+            padding: 12px 30px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .btn-custom:hover {
+            background-color: #d4a309;
+            color: #1a1a1a;
+        }
+
+        .icon {
+            font-size: 2.5rem;
+            color: #f0b90b;
+            margin-bottom: 20px;
+        }
+
+        .coin-search {
+            background-color: #2a2a2a;
+            border-radius: 8px;
+            padding: 30px;
+            margin-top: 40px;
+        }
+
+        .coin-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            gap: 20px;
+            padding: 20px;
+            max-height: 500px;
+            overflow-y: auto;
+        }
+
+        .coin-item {
+            background: #2a2a2a;
+            border-radius: 12px;
+            padding: 15px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .coin-item:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+            background: #333;
+        }
+
+        .coin-item img {
+            width: 48px;
+            height: 48px;
+            object-fit: contain;
+            margin-bottom: 10px;
+            border-radius: 50%;
+            background: #1a1a1a;
+            padding: 5px;
+        }
+
+        .coin-info {
+            text-align: center;
+            width: 100%;
+        }
+
+        .coin-info h3 {
+            font-size: 14px;
+            margin: 5px 0;
+            color: #fff;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .coin-info p {
+            font-size: 12px;
+            color: #888;
+            margin: 0;
+        }
+
+        #searchInput {
+            background-color: #333;
+            border: 1px solid #444;
+            color: #fff;
+            padding: 10px 15px;
+            border-radius: 4px;
+            width: 100%;
+            margin-bottom: 20px;
+        }
+
+        #searchInput:focus {
+            outline: none;
+            border-color: #f0b90b;
+        }
+
+        /* Scrollbar styling */
+        .coin-grid::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .coin-grid::-webkit-scrollbar-track {
+            background: #2a2a2a;
+        }
+
+        .coin-grid::-webkit-scrollbar-thumb {
+            background: #444;
+            border-radius: 4px;
+        }
+
+        .coin-grid::-webkit-scrollbar-thumb:hover {
+            background: #555;
+        }
+    </style>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.1/font/bootstrap-icons.css">
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark" style="background-color: #2a2a2a;">
+        <div class="container">
+            <a class="navbar-brand" href="/">Crypto Analysis</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link active" href="/home">Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/analysis">Analysis</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/visualization">Comparision</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <section class="hero-section">
+        <div class="container">
+            <div class="row align-items-center">
+                <div class="col-lg-6">
+                    <h1 class="display-4 mb-4">Advanced Crypto Price Analysis</h1>
+                    <p class="lead mb-4">Make informed decisions with our advanced cryptocurrency price prediction tools using machine learning and statistical analysis.</p>
+                    
+                    
+                </div>
+                <div class="coin-search">
+                    <input type="text" id="searchInput" placeholder="Search cryptocurrencies...">
+                    <div class="coin-grid" id="coinGrid">
+                        <!-- Coins will be dynamically added here -->
+                    </div>
+                    <button id="viewAnalysisBtn" class="btn btn-custom mt-3">
+                        View Detailed Analysis
+                    </button>
+                </div>
+                
+            </div>
+        </div>
+    </section>
+
+    <section class="py-5">
+        <div class="container">
+            <h2 class="text-center mb-5">Features</h2>
+            <div class="row">
+                <div class="col-md-4">
+                    <div class="feature-card">
+                        <i class="bi bi-graph-up icon"></i>
+                        <h3>Price Predictions</h3>
+                        <p>Advanced algorithms to predict cryptocurrency price movements with high accuracy.</p>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="feature-card">
+                        <i class="bi bi-clock-history icon"></i>
+                        <h3>Multiple Timeframes</h3>
+                        <p>Analyze price movements across different time intervals for better decision making.</p>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="feature-card">
+                        <i class="bi bi-currency-bitcoin icon"></i>
+                        <h3>Major Cryptocurrencies</h3>
+                        <p>Support for major cryptocurrencies including Bitcoin, Ethereum, and Binance Coin.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', async () => {
+            try {
+                const response = await fetch('/api/coins');
+                const coins = await response.json();
+                
+                const coinGrid = document.getElementById('coinGrid');
+                const searchInput = document.getElementById('searchInput');
+                const viewAnalysisBtn = document.getElementById('viewAnalysisBtn');
+
+                // Function to update selected coin
+                function updateSelectedCoin(symbol) {
+                    localStorage.setItem('selectedCoin', symbol);
+                    window.location.href = '/analysis';
+                }
+
+                // Create coin grid items
+                coins.forEach(coin => {
+                    const coinElement = document.createElement('div');
+                    coinElement.className = 'coin-item';
+                    coinElement.innerHTML = `
+                        <img src="${logoMap[coin.shortName] || 'https://cryptologos.cc/logos/question-mark.png'}" 
+                             alt="${coin.name}"
+                             onerror="this.src='https://cryptologos.cc/logos/question-mark.png';">
+                        <div class="coin-info">
+                            <h3>${coin.name}</h3>
+                            <p>${coin.shortName}/USDT</p>
+                        </div>
+                    `;
+                    
+                    // Add click handler to each coin
+                    coinElement.addEventListener('click', () => {
+                        updateSelectedCoin(coin.symbol);
+                    });
+                    
+                    coinGrid.appendChild(coinElement);
+                });
+
+                // Add search functionality
+                if (searchInput) {
+                    searchInput.addEventListener('input', (e) => {
+                        const searchTerm = e.target.value.toLowerCase();
+                        const coinItems = document.querySelectorAll('.coin-item');
+                        
+                        coinItems.forEach(item => {
+                            const coinName = item.querySelector('h3').textContent.toLowerCase();
+                            const coinSymbol = item.querySelector('p').textContent.toLowerCase();
+                            
+                            if (coinName.includes(searchTerm) || coinSymbol.includes(searchTerm)) {
+                                item.style.display = 'flex';
+                            } else {
+                                item.style.display = 'none';
+                            }
+                        });
+                    });
+                }
+
+                // Add click handler for "View Analysis" button if it exists
+                if (viewAnalysisBtn) {
+                    viewAnalysisBtn.addEventListener('click', () => {
+                        const selectedCoin = localStorage.getItem('selectedCoin') || 'BTCUSDT';
+                        window.location.href = '/analysis';
+                    });
+                }
+
+            } catch (error) {
+                console.error('Error loading coins:', error);
+            }
+        });
+
+        // Keep the logoMap definition
+        const logoMap = {
+            // Major Coins
+            'BTC': 'https://s2.coinmarketcap.com/static/img/coins/64x64/1.png',
+            'ETH': 'https://s2.coinmarketcap.com/static/img/coins/64x64/1027.png',
+            'BNB': 'https://s2.coinmarketcap.com/static/img/coins/64x64/1839.png',
+            'SOL': 'https://s2.coinmarketcap.com/static/img/coins/64x64/5426.png',
+            'XRP': 'https://s2.coinmarketcap.com/static/img/coins/64x64/52.png',
+            'ADA': 'https://s2.coinmarketcap.com/static/img/coins/64x64/2010.png',
+            'DOGE': 'https://s2.coinmarketcap.com/static/img/coins/64x64/74.png',
+            'DOT': 'https://s2.coinmarketcap.com/static/img/coins/64x64/6636.png',
+            'MATIC': 'https://s2.coinmarketcap.com/static/img/coins/64x64/3890.png',
+            'AVAX': 'https://s2.coinmarketcap.com/static/img/coins/64x64/5805.png',
+            'LINK': 'https://s2.coinmarketcap.com/static/img/coins/64x64/1975.png',
+            'UNI': 'https://s2.coinmarketcap.com/static/img/coins/64x64/7083.png',
+            'ATOM': 'https://s2.coinmarketcap.com/static/img/coins/64x64/3794.png',
+            'LTC': 'https://s2.coinmarketcap.com/static/img/coins/64x64/2.png',
+            'ETC': 'https://s2.coinmarketcap.com/static/img/coins/64x64/1321.png',
+            'XLM': 'https://s2.coinmarketcap.com/static/img/coins/64x64/512.png',
+            'VET': 'https://s2.coinmarketcap.com/static/img/coins/64x64/3077.png',
+            'ICP': 'https://s2.coinmarketcap.com/static/img/coins/64x64/8916.png',
+            'FIL': 'https://s2.coinmarketcap.com/static/img/coins/64x64/2280.png',
+            'AAVE': 'https://s2.coinmarketcap.com/static/img/coins/64x64/7278.png',
+            
+            // DeFi & Gaming
+            'SAND': 'https://s2.coinmarketcap.com/static/img/coins/64x64/6210.png',
+            'MANA': 'https://s2.coinmarketcap.com/static/img/coins/64x64/1966.png',
+            'APE': 'https://s2.coinmarketcap.com/static/img/coins/64x64/18876.png',
+            'APT': 'https://s2.coinmarketcap.com/static/img/coins/64x64/21794.png',
+            'GALA': 'https://s2.coinmarketcap.com/static/img/coins/64x64/7080.png',
+            'LDO': 'https://s2.coinmarketcap.com/static/img/coins/64x64/8000.png',
+            'CRV': 'https://s2.coinmarketcap.com/static/img/coins/64x64/6538.png',
+            'GMX': 'https://s2.coinmarketcap.com/static/img/coins/64x64/11857.png',
+            'IMX': 'https://s2.coinmarketcap.com/static/img/coins/64x64/10603.png',
+            'COMP': 'https://s2.coinmarketcap.com/static/img/coins/64x64/5692.png',
+            
+            // Layer 1s & 2s
+            'OP': 'https://s2.coinmarketcap.com/static/img/coins/64x64/11840.png',
+            'ARB': 'https://s2.coinmarketcap.com/static/img/coins/64x64/11841.png',
+            'SUI': 'https://s2.coinmarketcap.com/static/img/coins/64x64/20947.png',
+            'NEAR': 'https://s2.coinmarketcap.com/static/img/coins/64x64/6535.png',
+            'FTM': 'https://s2.coinmarketcap.com/static/img/coins/64x64/3513.png',
+            'ALGO': 'https://s2.coinmarketcap.com/static/img/coins/64x64/4030.png',
+            
+            // Additional Tokens
+            'SHIB': 'https://s2.coinmarketcap.com/static/img/coins/64x64/5994.png',
+            'THETA': 'https://s2.coinmarketcap.com/static/img/coins/64x64/2416.png',
+            'AXS': 'https://s2.coinmarketcap.com/static/img/coins/64x64/6783.png',
+            'WAVES': 'https://s2.coinmarketcap.com/static/img/coins/64x64/1274.png',
+            'CHZ': 'https://s2.coinmarketcap.com/static/img/coins/64x64/4066.png',
+            'ZEC': 'https://s2.coinmarketcap.com/static/img/coins/64x64/1437.png',
+            'XTZ': 'https://s2.coinmarketcap.com/static/img/coins/64x64/2011.png',
+            'ENJ': 'https://s2.coinmarketcap.com/static/img/coins/64x64/2130.png',
+            'BAT': 'https://s2.coinmarketcap.com/static/img/coins/64x64/1697.png',
+            'ZIL': 'https://s2.coinmarketcap.com/static/img/coins/64x64/2469.png',
+            'ONE': 'https://s2.coinmarketcap.com/static/img/coins/64x64/3945.png',
+            'IOTA': 'https://s2.coinmarketcap.com/static/img/coins/64x64/1720.png',
+            'NEO': 'https://s2.coinmarketcap.com/static/img/coins/64x64/1376.png',
+            'KAVA': 'https://s2.coinmarketcap.com/static/img/coins/64x64/4846.png',
+            'ONT': 'https://s2.coinmarketcap.com/static/img/coins/64x64/2566.png',
+            'ZRX': 'https://s2.coinmarketcap.com/static/img/coins/64x64/1896.png',
+            'CELO': 'https://s2.coinmarketcap.com/static/img/coins/64x64/5567.png',
+            'SNX': 'https://s2.coinmarketcap.com/static/img/coins/64x64/2586.png',
+            'ANKR': 'https://s2.coinmarketcap.com/static/img/coins/64x64/3783.png',
+            '1INCH': 'https://s2.coinmarketcap.com/static/img/coins/64x64/8104.png',
+            
+            // New Additions
+            'PYTH': 'https://s2.coinmarketcap.com/static/img/coins/64x64/27974.png',
+            'STX': 'https://s2.coinmarketcap.com/static/img/coins/64x64/4847.png',
+            'INJ': 'https://s2.coinmarketcap.com/static/img/coins/64x64/7226.png',
+            'RNDR': 'https://s2.coinmarketcap.com/static/img/coins/64x64/5690.png',
+            'FET': 'https://s2.coinmarketcap.com/static/img/coins/64x64/3773.png',
+            'AGIX': 'https://s2.coinmarketcap.com/static/img/coins/64x64/2424.png',
+            'OCEAN': 'https://s2.coinmarketcap.com/static/img/coins/64x64/3911.png',
+            'ROSE': 'https://s2.coinmarketcap.com/static/img/coins/64x64/7653.png',
+            'KLAY': 'https://s2.coinmarketcap.com/static/img/coins/64x64/4256.png',
+            'IOTX': 'https://s2.coinmarketcap.com/static/img/coins/64x64/2777.png',
+            'WOO': 'https://s2.coinmarketcap.com/static/img/coins/64x64/7501.png',
+            'TWT': 'https://s2.coinmarketcap.com/static/img/coins/64x64/5964.png',
+            'CFX': 'https://s2.coinmarketcap.com/static/img/coins/64x64/7334.png',
+            'SSV': 'https://s2.coinmarketcap.com/static/img/coins/64x64/8897.png',
+            'HOOK': 'https://s2.coinmarketcap.com/static/img/coins/64x64/22764.png',
+            'HIGH': 'https://s2.coinmarketcap.com/static/img/coins/64x64/9308.png',
+            'ASTR': 'https://s2.coinmarketcap.com/static/img/coins/64x64/12885.png',
+            'MAGIC': 'https://s2.coinmarketcap.com/static/img/coins/64x64/9767.png',
+            'FLOKI': 'https://s2.coinmarketcap.com/static/img/coins/64x64/9116.png',
+            'ID': 'https://s2.coinmarketcap.com/static/img/coins/64x64/8277.png',
+            'ORDI': 'https://s2.coinmarketcap.com/static/img/coins/64x64/25744.png',
+            'TIA': 'https://s2.coinmarketcap.com/static/img/coins/64x64/23935.png',
+            'MEME': 'https://s2.coinmarketcap.com/static/img/coins/64x64/25155.png',
+            'JOE': 'https://s2.coinmarketcap.com/static/img/coins/64x64/11396.png',
+            'ACE': 'https://s2.coinmarketcap.com/static/img/coins/64x64/24645.png',
+            'CELR': 'https://s2.coinmarketcap.com/static/img/coins/64x64/4379.png',
+            'MTL': 'https://s2.coinmarketcap.com/static/img/coins/64x64/1788.png',
+            'JASMY': 'https://s2.coinmarketcap.com/static/img/coins/64x64/8425.png',
+            'GLMR': 'https://s2.coinmarketcap.com/static/img/coins/64x64/6836.png',
+            'RAD': 'https://s2.coinmarketcap.com/static/img/coins/64x64/6843.png',
+            'PENDLE': 'https://s2.coinmarketcap.com/static/img/coins/64x64/8271.png',
+            'EDU': 'https://s2.coinmarketcap.com/static/img/coins/64x64/23437.png',
+            'PHB': 'https://s2.coinmarketcap.com/static/img/coins/64x64/2112.png',
+            'POLYX': 'https://s2.coinmarketcap.com/static/img/coins/64x64/2496.png',
+            'WLD': 'https://s2.coinmarketcap.com/static/img/coins/64x64/24735.png',
+            'CYBER': 'https://s2.coinmarketcap.com/static/img/coins/64x64/24736.png',
+            'ARKM': 'https://s2.coinmarketcap.com/static/img/coins/64x64/25022.png',
+            'NTRN': 'https://s2.coinmarketcap.com/static/img/coins/64x64/23147.png',
+            'BEAMX': 'https://s2.coinmarketcap.com/static/img/coins/64x64/24760.png',
+            'MAV': 'https://s2.coinmarketcap.com/static/img/coins/64x64/23013.png',
+            'BOME': 'https://s2.coinmarketcap.com/static/img/coins/64x64/28873.png'
+        };
+    </script>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
